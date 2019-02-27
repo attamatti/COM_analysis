@@ -110,10 +110,15 @@ plt.yticks(y_pos,COMSkeys,fontsize='xx-small')
 
 for y in range(data.shape[0]):
     for x in range(data.shape[1]):
-        plt.text(x + 0.5, y + 0.5, '%.1f' % data[y, x],
+        if data[y,x] < np.mean(data)+(np.std(data)*0.5):
+            color = 'k'
+        else:
+            color = 'w'
+        plt.text(x, y, '%.1f' % data[y, x],
                  horizontalalignment='center',
                  verticalalignment='center',
-                 fontsize='xx-small')
+                 fontsize='xx-small',
+                 color=color)
 
 plt.savefig('all_domains_diffs.png')
 plt.close()
@@ -140,10 +145,15 @@ def b_cmatrix(nbody):
     data = np.array(bc_difs)
     for y in range(data.shape[0]):
         for x in range(data.shape[1]):
+            if data[y,x] < np.mean(data)+(np.std(data)*0.5):
+                color = 'k'
+            else:
+                color = 'w'
             plt.text(x, y, '%.1f' % data[y, x],
                      horizontalalignment='center',
                      verticalalignment='center',
-                     fontsize='xx-small')
+                     fontsize='xx-small',
+                     color=color)
     plt.savefig('{0}_diffs.png'.format(bodids[nbody]))
     plt.close()
 
