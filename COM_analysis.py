@@ -113,8 +113,10 @@ plt.yticks(y_pos,COMSkeys,fontsize='xx-small')
 #plt.title('all domains')
 
 for y in range(data.shape[0]):
+    if colmax == False:
+        colmax = np.max(diffsarray)
     for x in range(data.shape[1]):
-        if data[y,x] < np.mean(data)+(np.std(data)*0.5):
+        if data[y,x] < 0.5*float(colmax):
             color = 'k'
         else:
             color = 'w'
@@ -151,7 +153,7 @@ def b_cmatrix(nbody,colmax):
     data = np.array(bc_difs)
     for y in range(data.shape[0]):
         for x in range(data.shape[1]):
-            if data[y,x] < np.mean(data)+(np.std(data)*0.5):
+            if data[y,x] < 0.5*float(colmax):
                 color = 'k'
             else:
                 color = 'w'
