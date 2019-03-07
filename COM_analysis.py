@@ -45,17 +45,20 @@ def calculateCOM(pdbdata,AArange,chain):
     return(centerofmass)
 
 def startup():
-    if len(sys.argv) < 3:
+    try:
+        pdbs = open(sys.argv[2],'r').readlines()
+        cmax = sys.argv[3] or False
+    except:
         sys.exit('''
-USAGE: COM_analysis.py <body definition file> <models file>
+USAGE: COM_analysis.py <body definition file> <models file> <max val for color scale>
 ---
 body definition file = four columns text file
 body_name       start_AA        end_AA      chain
 
 models file -  text file list of models one per line -  models must be in order of the motion    
-
+max val for colorscale is optional - used for normalizing multiple charts - leave blank for simple max of this data
 ---''') 
-
+    return(pdbs,cmax)
 def calc_COM_diffs(comlist1,comlist2):
     runningtotal = []
     for i in zip(comlist1,comlist2):
@@ -63,9 +66,10 @@ def calc_COM_diffs(comlist1,comlist2):
     return(runningtotal)
 
 ###### run the program
-startup()
+(pdbs,colmax)=startup()
+print colmax
 allbodies,bodids = get_bodies()
-pdbs = open(sys.argv[2],'r').readlines()
+
 COMSdic = {}                #{filename:[COMbody1, COMbody2, ... COMbodyn]}
 # get COM for each body in each pdb
 for pdbfile in pdbs:
@@ -131,12 +135,14 @@ def get_bb_diff(bodyno,comkey):
         bodydiflist.append(calc_dist(comkey[bodyno],COMSdic[j][bodyno]))
     return(bodydiflist)
 
-def b_cmatrix(nbody):
+def b_cmatrix(nbody,colmax):
     bc_difs = []
     for i in COMSkeys:
         bbdiffarray = get_bb_diff(nbody,COMSdic[i])
         bc_difs.append(bbdiffarray)
-    plt.matshow(bc_difs,cmap='Reds')
+    if colmax == False:
+        colmax = np.max(bc_difs)
+    plt.matshow(bc_difs,cmap='Reds',vmax=colmax)
     x_pos = np.arange(len(COMSkeys))
     plt.xticks(x_pos,COMSkeys,fontsize='xx-small',rotation='vertical')
     y_pos = np.arange(len(COMSkeys))
@@ -158,7 +164,7 @@ def b_cmatrix(nbody):
     plt.close()
 
 for i in range(len(bodids)):
-    b_cmatrix(i)
+    b_cmatrix(i,colmax)
     
 def write_outbild(name,listofcoms):
     output = open('COMs_{0}.bild'.format(name.split('.')[0]),'w')
