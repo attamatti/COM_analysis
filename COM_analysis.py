@@ -36,10 +36,9 @@ def calculateCOM(pdbdata,AArange,chain):
             print line
             if int(line[23:26]) in AArange and line[21] == chain and line[13:16] == 'CA ':
                 print('x')
-                coords = line[31:56].split()
-                x.append(float(coords[0]))
-                y.append(float(coords[1]))
-                z.append(float(coords[2]))    
+                x.append(float(line[31:38]))
+                y.append(float(line[38:47]))
+                z.append(float(line[47:55]))    
     centerofmass = [np.mean(x),np.mean(y),np.mean(z)]
     print centerofmass
     return(centerofmass)
